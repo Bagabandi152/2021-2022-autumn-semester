@@ -1,0 +1,110 @@
+package PackageFlyweight;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Random;
+import java.awt.Color;
+
+interface Shape{
+	void displayShape(String shapeType);
+}
+
+class Circle implements Shape{
+	private int radius;
+	private Color color;
+	Circle(){
+		this.radius = 1;
+		this.color = new Color(0,0,0);
+	}
+	Circle(int radius, Color color){
+		this.radius = radius;
+		this.color = color;
+	}
+	@Override
+	void displayShape(String shapeType){
+		System.out.println(shapeType + " Радиус: "+ radius + "Өнгө: " + color);
+	}
+}
+
+class Rectangle implements Shape{
+	private int width;
+	private int height;
+	private Color color;
+	Rectangle(){
+		this.width = 1;
+		this.height = 1;
+		this.color = new Color(0,0,0);
+	}
+	Rectangle(int width, int height, Color color){
+		this.width = width;
+		this.height = height;
+		this.color = color;
+	}
+	@Override
+	void displayShape(String shapeType){
+		System.out.println(shapeType + " Урт: "+ width + " Өндөр: "+ height + " Өнгө: " + color);
+	}
+}
+
+class Triangle implements Shape{
+	private int base;
+	private int height;
+	private Color color;
+	Triangle(){
+		this.base = 1;
+		this.height = 1;
+		this.color = new Color(0,0,0);
+	}
+	Triangle(int base, int height, Color color){
+		this.base = base;
+		this.height = height;
+		this.color = color;
+	}
+	@Override
+	void displayShape(String shapeType){
+		System.out.println(shapeType + " Суурь: "+ base + " Өндөр: "+ height + " Өнгө: " + color);
+	}
+}
+
+class Portfolio{
+	private static Map<String, Shape> map = new HashMap<>();
+	private Portfolio(){
+		throw new AssertionError("Cannot instantiate the class");
+	}
+	public static synchronized Shape getShapeInstance(String shapeType, int base, int height, Color color){
+		Shape shape = map.get(shapeType);
+		if(shape==null){
+			switch(shapeType){
+				case "Circle" : shape = new Circle(base, color);
+				break;
+				case "Rectangle" : shape = new Rectangle(base, height, color);
+				break;
+				case "Triangle" : shape = new Triangle(base, height, color);
+				break;
+			}
+			map.put(shapeType, shape);
+		}
+		return shape;
+	}
+}
+
+public class FlyweightDesignPattern {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Shape shape = Portfolio.getShapeInstance("Circle", 23, 0, new Color(0,0,0));
+		shape.displayShape("Circle");
+		String[] shapeTypes = {"Circle", "Rectangle", "Triangle"};
+		Random rand = new Random();
+		int low = 0;
+		int high = 255;
+		for(int i = 0; i < 99; i++){
+			int r = rand.nextInt(high-low) + low;
+			int g = rand.nextInt(high-low) + low;
+			int b = rand.nextInt(high-low) + low;
+			int base = rand.nextInt(high-low) + low;
+			int height = rand.nextInt(high-low) + low;
+			Color randomColor = new Color(r, g, b);
+			shape = Portfolio.getShapeInstance(shapeTypes[i%3], base, height, randomColor);
+			shape.displayShape(shapeTypes[i%3]);
+		}
+	}
+}
